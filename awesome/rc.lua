@@ -17,8 +17,10 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
--- importing bling for centered and other stuff
+-- Stuff I added myself 
 local bling = require("bling")
+local lain = require("lain")
+
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -62,7 +64,7 @@ modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
-    bling.layout.centered,
+lain.layout.centerwork,
     awful.layout.suit.tile,
     --awful.layout.suit.tile.left,
     --awful.layout.suit.tile.bottom,
@@ -72,7 +74,7 @@ awful.layout.layouts = {
     --awful.layout.suit.spiral,
     --awful.layout.suit.spiral.dwindle,
     --awful.layout.suit.max,
-    awful.layout.suit.max.fullscreen,
+--    awful.layout.suit.max.fullscreen,
     --awful.layout.suit.floating,
     --awful.layout.suit.magnifier,
    -- awful.layout.suit.corner.nw,
@@ -243,6 +245,8 @@ globalkeys = gears.table.join(
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
 
+--[[
+-- Default focusing (old way)
     awful.key({ modkey,           }, "j",
         function ()
             awful.client.focus.byidx( 1)
@@ -257,8 +261,38 @@ globalkeys = gears.table.join(
     ),
     awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
               {description = "show main menu", group = "awesome"}),
+--]]
+-- Focus by direction (new focus)
+awful.key({ modkey,           }, "j",
+        function ()
+            awful.client.focus.bydirection("down")
+        end,
+        {description = "focus beneath", group = "client"}
+    ),
+awful.key({ modkey,           }, "k",
+        function ()
+            awful.client.focus.bydirection("up")
+        end,
+        {description = "focus above", group = "client"}
+    ),
+awful.key({ modkey,           }, "h",
+        function ()
+            awful.client.focus.bydirection("left")
+        end,
+        {description = "focus left", group = "client"}
+    ),
+awful.key({ modkey,           }, "l",
+        function ()
+            awful.client.focus.bydirection("right")
+        end,
+        {description = "focus right", group = "client"}
+    ),
+
+
 
     -- Layout manipulation
+    --Default layout(old layuout)
+--[[ 
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
               {description = "swap with next client by index", group = "client"}),
     awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end,
@@ -270,6 +304,20 @@ globalkeys = gears.table.join(
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
               {description = "jump to urgent client", group = "client"}),
     awful.key({ modkey,           }, "Tab",
+    --]]
+    -- New movements by direction
+     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.bydirection("down")    end,
+              {description = "swap downward", group = "swap"}),
+    awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.bydirection("up")    end,
+              {description = "swap upward", group = "swap"}),
+    awful.key({ modkey, "Shift" }, "h", function () awful.client.swap.bydirection("left") end,
+              {description = "swap leftward", group = "swap"}),
+    awful.key({ modkey, "Shift" }, "l", function () awful.client.swap.bydirection("right") end,
+              {description = "swap rightward", group = "swap"}),
+    awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
+              {description = "jump to urgent client", group = "client"}),
+    awful.key({ modkey,           }, "Tab",
+
         function ()
             awful.client.focus.history.previous()
             if client.focus then
@@ -285,7 +333,7 @@ globalkeys = gears.table.join(
               {description = "reload awesome", group = "awesome"}),
     --awful.key({ modkey, "Shift"   }, "q", awesome.quit,
     --          {description = "quit awesome", group = "awesome"}),
-
+--[[
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)          end,
               {description = "increase master width factor", group = "layout"}),
     awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)          end,
@@ -298,6 +346,7 @@ globalkeys = gears.table.join(
               {description = "increase the number of columns", group = "layout"}),
     awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1, nil, true)    end,
               {description = "decrease the number of columns", group = "layout"}),
+--]]
     awful.key({ modkey,           }, "space", function () awful.layout.inc( 1)                end,
               {description = "select next", group = "layout"}),
     awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(-1)                end,
@@ -530,15 +579,13 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- }}}
 -- Gaps
 -- Autostart
--- nitrogen
 -- picom - compton
 awful.spawn.with_shell("nm-applet")
-awful.spawn.with_shell("brave-browser --restore-last-session")
-awful.spawn.with_shell("volumeicon")
+-- awful.spawn.with_shell("brave-browser --restore-last-session")
+-- awful.spawn.with_shell("volumeicon")
 
 --awful.spawn.with_shell("nitrogen --set-zoom-fill --random /usr/share/wallpapers")
 --awful.spawn_shell("picom")
---awful.spawn_shell("nitrogen")
 --
 
 -- xdg auto start attempts
