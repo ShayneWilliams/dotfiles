@@ -20,6 +20,7 @@ require("awful.hotkeys_popup.keys")
 -- Stuff I added myself 
 local bling = require("bling")
 local lain = require("lain")
+local volume_widget = require('awesome-wm-widgets.pactl-widget.volume')
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -221,6 +222,9 @@ awful.screen.connect_for_each_screen(function(s)
             wibox.widget.systray(),
             mytextclock,
             s.mylayoutbox,
+	    volume_widget{
+            widget_type = 'arc'
+        },
         },
     }
 end)
@@ -368,7 +372,7 @@ awful.key({ modkey,           }, "l",
     awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
               {description = "run prompt", group = "launcher"}),
     -- Browser
-    awful.key({ modkey },            "b",     function () awful.util.spawn('brave-browser')  end,
+    awful.key({ modkey },            "b",     function () awful.util.spawn('brave-browser --restore-last-session')  end,
               {description = "brave", group = "custom"}),
 	--File explorer
 	awful.key({ modkey },            "e",     function () awful.util.spawn('nautilus')  end,
