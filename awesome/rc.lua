@@ -585,7 +585,7 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- Autostart
 -- picom - compton
 awful.spawn.with_shell("nm-applet")
-awful.spawn("blueman-applet")
+awful.spawn.with_shell("sleep 20; blueman-applet")
 awful.spawn.with_shell("sleep 30; if(pgrep -x volumeicon); then exit; else volumeicon; fi; ")
 -- awful.spawn.with_shell("if(pgrep -x volumeicon); then exit; else volumeicon; fi; ")
 -- awful.spawn.with_shell("brave-browser --restore-last-session")
