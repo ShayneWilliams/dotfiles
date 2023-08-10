@@ -1,7 +1,8 @@
 -- If LuaRocks is installed, make sure that packages installed through it are
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
-
+--
+--
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
@@ -53,7 +54,7 @@ end
 beautiful.init("~/.config/awesome/theme.lua")
 -- This is used later as the default terminal and editor to run.
 terminal = "alacritty"
-editor = os.getenv("nvim") or "nano"
+editor = os.getenv("EDITOR") or "nano"
 editor_cmd = terminal .. " -e " .. editor
 
 -- Default modkey.
@@ -177,7 +178,8 @@ awful.screen.connect_for_each_screen(function(s)
     set_wallpaper(s)
 
     -- Each screen has its own tag table.
-    awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+    awful.tag({ "workB", "chillB", "notes", "chat", "clock", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+    
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -377,7 +379,11 @@ awful.key({ modkey,           }, "l",
 	--File explorer
 	awful.key({ modkey },            "e",     function () awful.util.spawn('nautilus')  end,
               {description = "file explorer", group = "custom"}),
+	-- Edit Config
+	-- awful.key({ modkey },            "c",     function () awful.util.spawn('nvim ~/.config/awesome/rc.lua')  end,
+        --      {description = "edit config", group = "custom"}),
 
+--editor_cmd .. " " .. awesome.conffile
     awful.key({ modkey }, "x",
               function ()
                   awful.prompt.run {
@@ -553,8 +559,25 @@ awful.rules.rules = {
       }, properties = { floating = true }},
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
-    -- { rule = { class = "Firefox" },
-    --   properties = { screen = 1, tag = "2" } },
+     --{ rule = { class = "firefox" },
+     --  properties = { screen = 1, tag = "5" } },
+     { rule = { class = "clocks" },
+       properties = { screen = 1, tag = "clocks" } },
+
+	{ rule = { class = "signal" },
+       properties = { screen = 1, tag = "chat" } },
+	{ rule = { class = "discord" },
+       properties = { screen = 1, tag = "chat", floating = false } },
+
+      { rule = { class = "obsidian" },
+       properties = { screen = 1, tag = "notes", floating = false} },
+    -- USE "xprop WM_CLASS" in your terminal then click on the window whose class you're trying to determine
+    -- You don't have to put "WM_CLASS" you can type anything I think, just click the window after when the cross shows up.
+    -- The seciton above basically just lets you determine what rules are applied when opening a specific program with the corresponding class.
+    -- This includes whether it's floating, what screen its on, what tag its own, and many other settings you can mess with if you want that are in the documentation
+
+    --[[{ rule = { class = "brave-browser"},
+    	properties = { screen = 1, tag = "5" } },]]--
 }
 -- }}}
 
@@ -586,9 +609,66 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- picom - compton
 awful.spawn.with_shell("nm-applet")
 awful.spawn.with_shell("sleep 20; blueman-applet")
-awful.spawn.with_shell("sleep 30; if(pgrep -x volumeicon); then exit; else volumeicon; fi; ")
+awful.spawn.with_shell("sleep 20; if(pgrep -x volumeicon); then exit; else volumeicon; fi; ")
+awful.spawn.with_shell("dunst")
+awful.spawn("gnome-clocks")
+
+awful.spawn("signal")
 -- awful.spawn.with_shell("if(pgrep -x volumeicon); then exit; else volumeicon; fi; ")
+-- awful.spawn.with_shell("flatpak run md.obsidian.Obsidian")
+--[[ ruled.client.append_rule {
+	rule= {
+	 class = "brave-browser"
+
+	},
+	 properties = {
+		 tag = screen[1].tags[3]
+		}
+} --]]
+
 -- awful.spawn.with_shell("brave-browser --restore-last-session")
+
+awful.spawn("flatpak run org.signal.Signal")
+awful.spawn("flatpak run com.discordapp.Discord")
+awful.spawn("brave-browser --restore-last-session")
+awful.spawn("flatpak run md.obsidian.Obsidian", { 
+	
+	-- RULES LIKE THE ONES BELOW FOR SOME REASON WILL NOTTTT WORK ON THIS PARTICULAR PROGRAM!
+	-- If you already have the program open, and you try to open more windows? It will just 
+	-- open new windows in floating mode in whatever screen you're in when it finishes loading NOT 
+	-- whatever screen you're in when it starts loading.
+	-- There was a solution though! Basically somewhere above, I set a rule for obsidian to
+	-- ALWAYS open in screen 3 using its xprop class(I describe more above) 
+	-- This way way it always opens obsidian in tag 3 for example(or whatever I selected) regardless
+	-- of if it's in floating mode or not. Another thing is that this is one of the rare cases where
+	-- the command to open obsidian is NOT the class name of the program. This is why I was having
+	-- so many problems. Basically the class name is "obsidian" but the command to open obsidian is
+	-- "flatpak run md.obsidian.Obsidian", which is what you'd have to type into the terminal
+	-- if it weren't for aliases. The thing is that for some reason aliases don't work in awful.spawn.
+	-- So you basically need to define them seperately!
+	-- Even the class property when included as a parameter here won't work because it likely has to do with the
+	-- fact that it still can't find it, either it doesn't know the location or it knows the location but it's not
+	-- available WHEN it looks for it. Classic missed the activation timing. This is especially important because the rules below will only work 
+	-- when you FIRST open the program on start(when the wm loads), whereas if you define them above it will work WHENEVER the program is opened.
+	--
+	--floating = false,
+	--tag = screen[1].tags[3],
+        --placement = awful.placement.no_overlap+awful.placement.no_offscreen,
+	--class = "obsidian"
+	--tag = "3"
+	--tag = "three",
+})
+
+--[[awful.spawn("", { 
+
+	floating = false,
+	tag = screen[1].tags[3],
+        placement = awful.placement.no_overlap+awful.placement.no_offscreen
+	--tag = "3"
+	--tag = "three",
+})--]]
+
+--awful.spawn("rhythmbox", {})
 -- awful.spawn.with_shell("volumeicon")
 
 --awful.spawn.with_shell("nitrogen --set-zoom-fill --random /usr/share/wallpapers")
