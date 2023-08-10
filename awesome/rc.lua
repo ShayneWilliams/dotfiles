@@ -22,6 +22,7 @@ require("awful.hotkeys_popup.keys")
 local bling = require("bling")
 local lain = require("lain")
 local volume_widget = require('awesome-wm-widgets.pactl-widget.volume')
+local mpris_widget = require("awesome-wm-widgets.mpris-widget")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -117,6 +118,8 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 -- {{{ Wibar
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
+
+
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -220,6 +223,7 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
+	    mpris_widget(),
             mykeyboardlayout,
             wibox.widget.systray(),
             mytextclock,
@@ -233,11 +237,12 @@ end)
 -- }}}
 
 -- {{{ Mouse bindings
-root.buttons(gears.table.join(
+-- THE BANE OF MY EXISTENCE, NEVER TURN THIS BACK ON!
+--[[root.buttons(gears.table.join(
     awful.button({ }, 3, function () mymainmenu:toggle() end),
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
-))
+))--]]
 -- }}}
 
 -- {{{ Key bindings
@@ -614,6 +619,10 @@ awful.spawn.with_shell("dunst")
 awful.spawn("gnome-clocks")
 
 awful.spawn("signal")
+-- shkd is the keybind program, remember it requires its own config file!
+awful.spawn("sxhkd")
+
+awful.spawn("syncthing")
 -- awful.spawn.with_shell("if(pgrep -x volumeicon); then exit; else volumeicon; fi; ")
 -- awful.spawn.with_shell("flatpak run md.obsidian.Obsidian")
 --[[ ruled.client.append_rule {
