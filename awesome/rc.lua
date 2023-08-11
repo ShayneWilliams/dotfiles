@@ -22,7 +22,8 @@ require("awful.hotkeys_popup.keys")
 local bling = require("bling")
 local lain = require("lain")
 local volume_widget = require('awesome-wm-widgets.pactl-widget.volume')
-local mpris_widget = require("awesome-wm-widgets.mpris-widget")
+-- mpris was experimental broken trash
+--local mpris_widget = require("awesome-wm-widgets.mpris-widget")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -181,7 +182,7 @@ awful.screen.connect_for_each_screen(function(s)
     set_wallpaper(s)
 
     -- Each screen has its own tag table.
-    awful.tag({ "workB", "chillB", "notes", "chat", "clock", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+    awful.tag({ "workB", "chillB", "notes", "chat", "clocks", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
     
 
     -- Create a promptbox for each screen
@@ -223,7 +224,7 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-	    mpris_widget(),
+	   -- mpris_widget(),
             mykeyboardlayout,
             wibox.widget.systray(),
             mytextclock,
@@ -566,10 +567,10 @@ awful.rules.rules = {
     -- Set Firefox to always map on the tag named "2" on screen 1.
      --{ rule = { class = "firefox" },
      --  properties = { screen = 1, tag = "5" } },
-     { rule = { class = "clocks" },
+     { rule = { class = "org.gnome.clocks" },
        properties = { screen = 1, tag = "clocks" } },
 
-	{ rule = { class = "signal" },
+	{ rule = { class = "Signal" },
        properties = { screen = 1, tag = "chat" } },
 	{ rule = { class = "discord" },
        properties = { screen = 1, tag = "chat", floating = false } },
